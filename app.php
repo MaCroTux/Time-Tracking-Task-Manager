@@ -158,7 +158,7 @@ function getAccumulateTimeFromPrevTask(string $prevDate, string $date): string
 {
     $timeAccumulated = "";
 
-    if (empty($datePrev)) {
+    if (empty($prevDate)) {
         return "";
     }
 
@@ -167,13 +167,13 @@ function getAccumulateTimeFromPrevTask(string $prevDate, string $date): string
     $dateAccumulated = $datePrev->diff($dateNow);
 
     if ($dateAccumulated->h > 0) {
-        $timeAccumulated .= "+{$dateAccumulated->h}h ";
+        $timeAccumulated .= "{$dateAccumulated->h}h ";
     }
     if ($dateAccumulated->i > 0) {
-        $timeAccumulated .= "+{$dateAccumulated->i}m";
+        $timeAccumulated .= "{$dateAccumulated->i}m";
     }
 
-    return $timeAccumulated;
+    return "+$timeAccumulated";
 }
 function getTaskAndTimeFromString($prevDate, $date, $task): string
 {
