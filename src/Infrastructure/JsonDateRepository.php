@@ -1,0 +1,59 @@
+<?php
+
+namespace Tracking\Infrastructure;
+
+use DateTimeImmutable;
+use Tracking\Domain\DateRepository;
+use Tracking\Domain\DateTime;
+
+class JsonDateRepository implements DateRepository
+{
+    private const FILENAME = './dates.json';
+
+    public function readAll(?DateTime $now = null): array
+    {
+        if (!file_exists(JsonDateRepository::FILENAME)) {
+            return [];
+        }
+
+        if ($now !== null) {
+            $all = jsonDecodeFile(JsonDateRepository::FILENAME);
+
+            return array_filter(
+                $all,
+                function ($date) use ($now) {
+                    $dateTime = DateTimeImmutable::createFromFormat(
+                        DateTimeImmutable::ATOM,
+                        $date['date']
+                    );
+                    $now = DateTimeImmutable::createFromFormat(
+                        DateTimeImmutable::ATOM,
+                        $now->format()
+                    );
+
+                    return $dateTime->diff($now)->d === 0;
+                }
+            );
+        }
+
+        return jsonDecodeFile(JsonDateRepository::FILENAME);
+    }
+
+    public function save(DateTime $dateTime, string $dateTracking): void
+    {
+        $data = [];
+        if (file_exists(JsonDateRepository::FILENAME)) {
+            $data = json_decode(
+                file_get_contents(JsonDateRepository::FILENAME),
+                true
+            );
+        }
+
+        $data[$dateTime->format()] = [
+            'dateWeek' => $dateTime->__toString(),
+            'date' => $dateTime->format(),
+            'tracking' => $dateTracking,
+        ];
+        file_put_contents(JsonDateRepository::FILENAME, json_encode($data));
+    }
+}
