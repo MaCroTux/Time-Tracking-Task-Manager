@@ -1,6 +1,6 @@
 <?php
 
-namespace Tracking\Domain;
+namespace Tracking\Domain\Entity;
 
 use DateInterval;
 use DateTimeImmutable;

@@ -1,6 +1,8 @@
 <?php
 
-namespace Tracking\Domain;
+namespace Tracking\Domain\Repository;
+
+use Tracking\Domain\Entity\DateTime;
 
 interface DateRepository
 {

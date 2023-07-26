@@ -1,6 +1,6 @@
 <?php
 
-namespace Tracking\Domain;
+namespace Tracking\Domain\Repository;
 
 interface OutPutOInterface
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Tracking\Infrastructure;
+namespace Tracking\Infrastructure\Persistence;
 
 use DateTimeImmutable;
 use DateTimeInterface;
-use Tracking\Domain\DateRepository;
-use Tracking\Domain\DateTime;
+use Tracking\Domain\Entity\DateTime;
+use Tracking\Domain\Repository\DateRepository;
 
 class JsonDateRepository implements DateRepository
 {

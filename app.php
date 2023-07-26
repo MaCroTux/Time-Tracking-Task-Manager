@@ -3,12 +3,12 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Tracking\Application\ShowTaskUseCase;
-use Tracking\Domain\AcumulateTimeFromPrevTaskService;
-use Tracking\Domain\ListCommand;
 use Tracking\Domain\CommandFinder;
-use Tracking\Domain\DateTime;
-use Tracking\Infrastructure\ConsoleOutput;
-use Tracking\Infrastructure\JsonDateRepository;
+use Tracking\Domain\Entity\DateTime;
+use Tracking\Domain\Service\AcumulateTimeFromPrevTaskService;
+use Tracking\Domain\Service\ListCommandService;
+use Tracking\Infrastructure\OutputInterface\ConsoleOutput;
+use Tracking\Infrastructure\Persistence\JsonDateRepository;
 
 // ---- MAIN ----
 array_shift($argv);
@@ -19,7 +19,7 @@ $dateRepository = new JsonDateRepository();
 $time = DateTime::now();
 $commandFinder = new CommandFinder();
 
-$listCommand = new ListCommand(
+$listCommand = new ListCommandService(
     new AcumulateTimeFromPrevTaskService(),
     $dateRepository,
     $time,

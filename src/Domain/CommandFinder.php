@@ -2,6 +2,8 @@
 
 namespace Tracking\Domain;
 
+use Tracking\Domain\Repository\OutPutOInterface;
+
 class CommandFinder
 {
     /** @var Command[] */

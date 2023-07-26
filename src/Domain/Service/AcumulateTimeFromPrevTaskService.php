@@ -1,6 +1,8 @@
 <?php
 
-namespace Tracking\Domain;
+namespace Tracking\Domain\Service;
+
+use Tracking\Domain\Entity\DateTime;
 
 class AcumulateTimeFromPrevTaskService
 {

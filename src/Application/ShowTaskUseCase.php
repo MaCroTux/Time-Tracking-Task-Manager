@@ -3,9 +3,9 @@
 namespace Tracking\Application;
 
 use Tracking\Domain\CommandFinder;
-use Tracking\Domain\DateRepository;
-use Tracking\Domain\DateTime;
-use Tracking\Domain\OutPutOInterface;
+use Tracking\Domain\Entity\DateTime;
+use Tracking\Domain\Repository\DateRepository;
+use Tracking\Domain\Repository\OutPutOInterface;
 
 class ShowTaskUseCase
 {

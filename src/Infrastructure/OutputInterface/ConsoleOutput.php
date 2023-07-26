@@ -1,8 +1,8 @@
 <?php
 
-namespace Tracking\Infrastructure;
+namespace Tracking\Infrastructure\OutputInterface;
 
-use Tracking\Domain\OutPutOInterface;
+use Tracking\Domain\Repository\OutPutOInterface;
 
 class ConsoleOutput implements OutPutOInterface
 {
