@@ -45,7 +45,7 @@ class ListCommand implements Command
 
         $taskMessage = $taskListRaw[self::CURRENT_INDEX][self::TASK_MESSAGE] ?? '';
         $timeAccumulated = $taskListRaw[self::NEXT_INDEX][self::TASK_TIME] ?? '';
-        $this->outPut->writeNl("1. {$taskMessage} ({$timeAccumulated})");
+        $this->outPut->writeNl("1. $taskMessage ($timeAccumulated)");
 
         foreach ($taskListRaw as $index => $item) {
             if ($index === 0) {
@@ -58,7 +58,7 @@ class ListCommand implements Command
                 ?? "{$this->lastTimeTracking()}, llevas actualmente"
             ;
 
-            $this->outPut->writeNl("{$taskNumber}. {$taskMessage} ({$timeAccumulated})");
+            $this->outPut->writeNl("$taskNumber. $taskMessage ($timeAccumulated)");
         }
     }
 
@@ -66,7 +66,7 @@ class ListCommand implements Command
     {
         $command = self::COMMAND;
 
-        return "{$command} Lista todas las tareas registradas.";
+        return "$command Lista todas las tareas registradas.";
     }
 
     private function lastTimeTracking(): string

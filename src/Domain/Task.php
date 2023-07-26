@@ -35,6 +35,6 @@ class Task
 
     public function __toString(): string
     {
-        return "{$this->task} ({$this->timeAccumulated})";
+        return "$this->task ($this->timeAccumulated)";
     }
 }

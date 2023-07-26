@@ -61,7 +61,7 @@ class ShowTaskUseCase
         OutPutOInterface $output
     ): void {
         $dateRepository->save($dateTime, $input);
-        $output->write("[{$dateTime->__toString()}]: {$input}");
+        $output->write("[{$dateTime->__toString()}]: $input");
         $output->addEOL();
         $output->addEOL();
         $output->write("Tarea registrada !");

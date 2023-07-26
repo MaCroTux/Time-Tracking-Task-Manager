@@ -3,6 +3,7 @@
 namespace Tracking\Infrastructure;
 
 use DateTimeImmutable;
+use DateTimeInterface;
 use Tracking\Domain\DateRepository;
 use Tracking\Domain\DateTime;
 
@@ -23,11 +24,11 @@ class JsonDateRepository implements DateRepository
                 $all,
                 function ($date) use ($now) {
                     $dateTime = DateTimeImmutable::createFromFormat(
-                        DateTimeImmutable::ATOM,
+                        DateTimeInterface::ATOM,
                         $date['date']
                     );
                     $now = DateTimeImmutable::createFromFormat(
-                        DateTimeImmutable::ATOM,
+                        DateTimeInterface::ATOM,
                         $now->format()
                     );
 

@@ -23,7 +23,7 @@ class DateTime
     {
         return new self(
             DateTimeImmutable::createFromFormat(
-                DateTimeImmutable::ATOM,
+                DateTimeInterface::ATOM,
                 $date,
                 new DateTimeZone(DateTime::TIME_ZONE)
             )
@@ -47,7 +47,7 @@ class DateTime
 
     public function format(): string
     {
-        return $this->dateTimeImmutable->format(DateTimeImmutable::ATOM);
+        return $this->dateTimeImmutable->format(DateTimeInterface::ATOM);
     }
 
     public function __toString(): string
