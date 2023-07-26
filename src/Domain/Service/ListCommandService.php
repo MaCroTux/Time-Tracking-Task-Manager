@@ -50,7 +50,9 @@ class ListCommandService implements Command
         );
 
         $taskMessage = $taskListRaw[self::CURRENT_INDEX][self::TASK_MESSAGE] ?? '';
-        $timeAccumulated = $taskListRaw[self::NEXT_INDEX][self::TASK_TIME] ?? '';
+        $timeAccumulated = $taskListRaw[self::NEXT_INDEX][self::TASK_TIME]
+            ?? "{$this->lastTimeTracking()}, llevas actualmente";
+
         $this->outPut->writeNl("1. $taskMessage ($timeAccumulated)");
 
         foreach ($taskListRaw as $index => $item) {
