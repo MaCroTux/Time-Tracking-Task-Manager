@@ -10,7 +10,6 @@ use Tracking\Domain\Service\ListCommandService;
 use Tracking\Infrastructure\OutputInterface\ConsoleOutput;
 use Tracking\Infrastructure\Persistence\JsonDateRepository;
 
-// ---- MAIN ----
 array_shift($argv);
 $input = implode(' ', $argv);
 
