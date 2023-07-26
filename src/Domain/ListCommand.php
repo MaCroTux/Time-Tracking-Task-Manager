@@ -36,7 +36,7 @@ class ListCommand implements Command
     {
         $this->outPut->addEOL();
 
-        $lastDate = getList($this->dateRepository, $this->dateTime);
+        $lastDate = $this->getList($this->dateTime);
 
         $taskListRaw = array_map(
             fn (Task $task) => $task->toArray(),
@@ -77,5 +77,23 @@ class ListCommand implements Command
             end($dates),
             date(DATE_ATOM)
         );
+    }
+
+    /**
+     * @param DateTime $dateTime
+     * @return Task[] $input
+     */
+    private function getList(DateTime $dateTime): array
+    {
+        $dates = $this->dateRepository->readAll($dateTime);
+
+        $list = [];
+        $prevDate = null;
+        foreach ($dates as $date => $task) {
+            $list[] = Task::build($prevDate, $date, $task);
+            $prevDate = $date;
+        }
+
+        return $list;
     }
 }

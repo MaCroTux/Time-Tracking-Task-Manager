@@ -17,7 +17,7 @@ class JsonDateRepository implements DateRepository
         }
 
         if ($now !== null) {
-            $all = jsonDecodeFile(JsonDateRepository::FILENAME);
+            $all = $this->jsonDecodeFile(JsonDateRepository::FILENAME);
 
             return array_filter(
                 $all,
@@ -36,7 +36,7 @@ class JsonDateRepository implements DateRepository
             );
         }
 
-        return jsonDecodeFile(JsonDateRepository::FILENAME);
+        return $this->jsonDecodeFile(JsonDateRepository::FILENAME);
     }
 
     public function save(DateTime $dateTime, string $dateTracking): void
@@ -54,6 +54,19 @@ class JsonDateRepository implements DateRepository
             'date' => $dateTime->format(),
             'tracking' => $dateTracking,
         ];
+
         file_put_contents(JsonDateRepository::FILENAME, json_encode($data));
+    }
+
+    private function jsonDecodeFile(string $fileName): array
+    {
+        if (!file_exists($fileName)) {
+            return [];
+        }
+
+        return json_decode(
+            file_get_contents($fileName),
+            true
+        );
     }
 }
