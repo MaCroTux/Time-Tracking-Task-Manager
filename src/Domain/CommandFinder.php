@@ -7,6 +7,16 @@ class CommandFinder
     /** @var Command[] */
     private array $commands = [];
 
+    public function help(OutPutOInterface $output): void
+    {
+        $help = '';
+        foreach ($this->commands as $command) {
+            $help .= $command->geyHelpMessage() . PHP_EOL;
+        }
+
+        $output->write($help);
+    }
+
     public function addCommand(Command $command): void
     {
         $this->commands[] = $command;

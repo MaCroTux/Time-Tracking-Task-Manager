@@ -32,6 +32,11 @@ function read(): string
     return $input;
 }
 
+/**
+ * @param DateRepository $dateRepository
+ * @param DateTime $dateTime
+ * @return Task[] $input
+ */
 function getList(DateRepository $dateRepository, DateTime $dateTime): array
 {
     $dates = $dateRepository->readAll($dateTime);
@@ -50,29 +55,55 @@ function showTasks(
     DateTime         $dateTime,
     DateRepository   $dateRepository,
     OutPutOInterface $output,
-    CommandFinder    $commandFinder
+    CommandFinder    $commandFinder,
+    string           $input
 ): void {
-    echo "[{$dateTime->__toString()}]: ";
-    $input = trim(read());
-
     if (empty($input)) {
+        $output->writeNl("-help para más información");
+        return;
+    }
+
+    if (isHelperCommand($input)) {
+        $output->writeNl("Lista de comandos:");
+        $output->addEOL();
+        $commandFinder->help($output);
+        return;
+    }
+
+    if (isNotCommandParameter($input)) {
+        saveTask($dateRepository, $dateTime, $input, $output);
+
         return;
     }
 
     $command = $commandFinder->findCommand($input);
-    if ($command) {
-        $command->__invoke();
+    $command?->__invoke();
+}
 
-        return;
-    }
+function isHelperCommand(string $input): bool
+{
+    return str_starts_with($input, '-help');
+}
 
+function saveTask(DateRepository $dateRepository, DateTime $dateTime, string $input, OutPutOInterface $output): void
+{
     $dateRepository->save($dateTime, $input);
+    $output->write("[{$dateTime->__toString()}]: {$input}");
+    $output->addEOL();
     $output->addEOL();
     $output->write("Tarea registrada !");
     $output->addEOL();
 }
 
+function isNotCommandParameter(string $input): bool
+{
+    return !str_starts_with($input, '-');
+}
+
 // ---- MAIN ----
+array_shift($argv);
+$input = implode(' ', $argv);
+
 $outPut = new ConsoleOutput("");
 $dateRepository = new JsonDateRepository();
 $time = DateTime::now();
@@ -90,7 +121,8 @@ showTasks(
     $time,
     $dateRepository,
     $outPut,
-    $commandFinder
+    $commandFinder,
+    $input
 );
 
 echo $outPut->read();
