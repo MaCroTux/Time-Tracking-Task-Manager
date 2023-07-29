@@ -50,6 +50,11 @@ class DateTime
         return $this->dateTimeImmutable->format(DateTimeInterface::ATOM);
     }
 
+    public function formatWithRules(string $rules): string
+    {
+        return $this->dateTimeImmutable->format($rules);
+    }
+
     public function __toString(): string
     {
         return $this->dateTimeImmutable->format(DateTime::DATE_FORMAT);

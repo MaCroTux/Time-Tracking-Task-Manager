@@ -9,16 +9,31 @@ use Tracking\Domain\Repository\DateRepository;
 
 class JsonDateRepository implements DateRepository
 {
-    private const FILENAME = './dates.json';
+    private const FILENAME = 'dates';
+    private const DATE_TIME_STRING_RULES = 'Ymd';
 
+    private DateTime $dateTime;
+
+    public function __construct(DateTime $dateTime)
+    {
+        $this->dateTime = $dateTime;
+    }
+
+    private function getTimeFileName(): string
+    {
+        $timeName = $this->dateTime->formatWithRules(self::DATE_TIME_STRING_RULES);
+        $fileName = self::FILENAME;
+
+        return "./$fileName$timeName.json";
+    }
     public function readAll(?DateTime $now = null): array
     {
-        if (!file_exists(JsonDateRepository::FILENAME)) {
+        if (!file_exists($this->getTimeFileName())) {
             return [];
         }
 
         if ($now !== null) {
-            $all = $this->jsonDecodeFile(JsonDateRepository::FILENAME);
+            $all = $this->jsonDecodeFile($this->getTimeFileName());
 
             return array_filter(
                 $all,
@@ -37,15 +52,15 @@ class JsonDateRepository implements DateRepository
             );
         }
 
-        return $this->jsonDecodeFile(JsonDateRepository::FILENAME);
+        return $this->jsonDecodeFile($this->getTimeFileName());
     }
 
     public function save(DateTime $dateTime, string $dateTracking): void
     {
         $data = [];
-        if (file_exists(JsonDateRepository::FILENAME)) {
+        if (file_exists($this->getTimeFileName())) {
             $data = json_decode(
-                file_get_contents(JsonDateRepository::FILENAME),
+                file_get_contents($this->getTimeFileName()),
                 true
             );
         }
@@ -56,7 +71,12 @@ class JsonDateRepository implements DateRepository
             'tracking' => $dateTracking,
         ];
 
-        file_put_contents(JsonDateRepository::FILENAME, json_encode($data));
+        $this->saveFileData($data);
+    }
+
+    private function saveFileData(array $data): void
+    {
+        file_put_contents($this->getTimeFileName(), json_encode($data));
     }
 
     private function jsonDecodeFile(string $fileName): array

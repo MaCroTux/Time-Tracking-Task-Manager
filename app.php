@@ -12,10 +12,10 @@ use Tracking\Infrastructure\Persistence\JsonDateRepository;
 
 array_shift($argv);
 $input = implode(' ', $argv);
+$time = DateTime::now();
 
 $outPut = new ConsoleOutput("");
-$dateRepository = new JsonDateRepository();
-$time = DateTime::now();
+$dateRepository = new JsonDateRepository($time);
 $commandFinder = new CommandFinder();
 
 $listCommand = new ListCommandService(
