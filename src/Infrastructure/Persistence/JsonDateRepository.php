@@ -32,26 +32,6 @@ class JsonDateRepository implements DateRepository
             return [];
         }
 
-        if ($now !== null) {
-            $all = $this->jsonDecodeFile($this->getTimeFileName());
-
-            return array_filter(
-                $all,
-                function ($date) use ($now) {
-                    $dateTime = DateTimeImmutable::createFromFormat(
-                        DateTimeInterface::ATOM,
-                        $date['date']
-                    );
-                    $now = DateTimeImmutable::createFromFormat(
-                        DateTimeInterface::ATOM,
-                        $now->format()
-                    );
-
-                    return $dateTime->diff($now)->d === 0;
-                }
-            );
-        }
-
         return $this->jsonDecodeFile($this->getTimeFileName());
     }
 
