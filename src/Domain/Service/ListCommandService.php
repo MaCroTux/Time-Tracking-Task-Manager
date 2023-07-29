@@ -50,6 +50,11 @@ class ListCommandService implements Command
         );
 
         $taskMessage = $taskListRaw[self::CURRENT_INDEX][self::TASK_MESSAGE] ?? '';
+        if (empty($taskMessage)) {
+            $this->outPut->writeNl("Sin tareas registradas.");
+            return;
+        }
+
         $timeAccumulated = $taskListRaw[self::NEXT_INDEX][self::TASK_TIME]
             ?? "{$this->lastTimeTracking()}, llevas actualmente";
 
