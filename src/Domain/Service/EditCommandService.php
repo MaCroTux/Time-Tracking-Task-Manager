@@ -8,13 +8,10 @@ use Tracking\Domain\Entity\Task;
 use Tracking\Domain\Repository\DateRepository;
 use Tracking\Domain\Repository\OutPutOInterface;
 
-class ListCommandService implements Command
+class EditCommandService implements Command
 {
-    private const TASK_MESSAGE = 0;
-    private const TASK_TIME = 1;
-    private const COMMAND = "-l";
-    private const CURRENT_INDEX = 0;
-    private const NEXT_INDEX = 1;
+    private const TASK_MESSAGE = 'tracking';
+    private const COMMAND = "-e";
 
     private AcumulateTimeFromPrevTaskService $acumulateTimeFromPrevTaskService;
     private DateRepository $dateRepository;
@@ -40,39 +37,48 @@ class ListCommandService implements Command
 
     public function __invoke(array $inputs): void
     {
+        if (count($inputs) !== 2) {
+            $this->outPut->writeNl("El comando -e necesita dos parámetros.");
+            $this->outPut->writeNl("Ejemplo -e 1.");
+            return;
+        }
+
+        [$command, $index] = $inputs;
+        unset($command);
         $this->outPut->addEOL();
 
-        $lastDate = $this->getList($this->dateTime);
+        $taskForEditRaw = $this->getTask($this->dateTime, (int)$index);
 
-        $taskListRaw = array_map(
-            fn (Task $task) => $task->toArray(),
-            $lastDate
-        );
+        if ($taskForEditRaw === null) {
+            $this->outPut->writeNl("No existe la tarea con el índice $index.");
+            return;
+        }
 
-        $taskMessage = $taskListRaw[self::CURRENT_INDEX][self::TASK_MESSAGE] ?? '';
+        $taskMessage = $taskForEditRaw[self::TASK_MESSAGE] ?? '';
         if (empty($taskMessage)) {
             $this->outPut->writeNl("Sin tareas registradas.");
             return;
         }
 
-        $timeAccumulated = $taskListRaw[self::NEXT_INDEX][self::TASK_TIME]
-            ?? "{$this->lastTimeTracking()}, llevas actualmente";
 
-        $this->outPut->writeNl("1. $taskMessage ($timeAccumulated)");
+        $this->outPut->writeNl("1. $taskMessage");
+        $this->outPut->write("[Nuevo nombre] 1. ");
 
-        foreach ($taskListRaw as $index => $item) {
-            if ($index === 0) {
-                continue;
-            }
+        echo $this->outPut->read();
 
-            $taskNumber = $index + 1;
-            $taskMessage = $item[self::TASK_MESSAGE] ?? '';
-            $timeAccumulated = $taskListRaw[$index + 1][self::TASK_TIME]
-                ?? "{$this->lastTimeTracking()}, llevas actualmente"
-            ;
+        $newNameForTask = readline();
 
-            $this->outPut->writeNl("$taskNumber. $taskMessage ($timeAccumulated)");
+        if (empty($newNameForTask)) {
+            $this->outPut->writeNl("No se ha cambiado el nombre de la tarea.");
+            return;
         }
+
+        $this->dateRepository->update(
+            DateTime::fromString($taskForEditRaw['date']),
+            $newNameForTask
+        );
+
+        $this->outPut->writeNl("Tarea modificada.");
     }
 
     public function geyHelpMessage(): string
@@ -94,20 +100,22 @@ class ListCommandService implements Command
 
     /**
      * @param DateTime $dateTime
-     * @return Task[] $input
+     * @param int $index
+     * @return null|array
      */
-    private function getList(DateTime $dateTime): array
+    private function getTask(DateTime $dateTime, int $index): ?array
     {
-        $dates = $this->dateRepository->readAll($dateTime);
+        $tasks = $this->dateRepository->readAll($dateTime);
 
-        $list = [];
-        $prevDate = null;
-        foreach ($dates as $date => $task) {
-            $list[] = Task::build($prevDate, $date, $task);
-            $prevDate = $date;
+        $i = 1;
+        foreach ($tasks as $task) {
+            if ($i === $index) {
+                return $task;
+            }
+            $i++;
         }
 
-        return $list;
+        return null;
     }
 
     public function isDefault(): bool

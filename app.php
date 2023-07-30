@@ -6,15 +6,15 @@ use Tracking\Application\ShowTaskUseCase;
 use Tracking\Domain\CommandFinder;
 use Tracking\Domain\Entity\DateTime;
 use Tracking\Domain\Service\AcumulateTimeFromPrevTaskService;
+use Tracking\Domain\Service\EditCommandService;
 use Tracking\Domain\Service\ListCommandService;
 use Tracking\Infrastructure\OutputInterface\ConsoleOutput;
 use Tracking\Infrastructure\Persistence\JsonDateRepository;
 
 array_shift($argv);
-$input = implode(' ', $argv);
 $time = DateTime::now();
 
-$outPut = new ConsoleOutput("");
+$outPut = new ConsoleOutput([]);
 $dateRepository = new JsonDateRepository($time);
 $commandFinder = new CommandFinder();
 
@@ -26,6 +26,14 @@ $listCommand = new ListCommandService(
 );
 $commandFinder->addCommand($listCommand);
 
+$editCommand = new EditCommandService(
+    new AcumulateTimeFromPrevTaskService(),
+    $dateRepository,
+    $time,
+    $outPut
+);
+$commandFinder->addCommand($editCommand);
+
 $showTaskUseCase = new ShowTaskUseCase($dateRepository, $outPut, $commandFinder);
-$showTaskUseCase->__invoke($time, $input);
+$showTaskUseCase->__invoke($time, $argv);
 echo $outPut->read();

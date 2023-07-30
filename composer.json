@@ -3,5 +3,8 @@
         "psr-4": {
             "Tracking\\": "src/"
         }
-    }
+    },
+  "require": {
+    "ext-readline": "*"
+  }
 }

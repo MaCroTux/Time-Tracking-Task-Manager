@@ -6,29 +6,32 @@ use Tracking\Domain\Repository\OutPutOInterface;
 
 class ConsoleOutput implements OutPutOInterface
 {
-    private string $message;
-    public function __construct(string $message)
+    private array $message;
+    public function __construct(array $message)
     {
         $this->message = $message;
     }
 
     public function write(string $message): void
     {
-        $this->message .= $message;
+        $this->message[] = $message;
     }
 
     public function writeNl(string $message): void
     {
-        $this->message .= $message . PHP_EOL;
+        $this->message[] = $message . PHP_EOL;
     }
 
     public function addEOL(): void
     {
-        $this->message .= PHP_EOL;
+        $this->message[] = PHP_EOL;
     }
 
     public function read(): string
     {
-        return $this->message;
+        $output = implode('', $this->message);
+        $this->message = [];
+
+        return $output;
     }
 }

@@ -70,4 +70,23 @@ class JsonDateRepository implements DateRepository
             true
         );
     }
+
+    public function update(DateTime $dateTime, string $newNameForTask): void
+    {
+        $data = [];
+        if (file_exists($this->getTimeFileName())) {
+            $data = json_decode(
+                file_get_contents($this->getTimeFileName()),
+                true
+            );
+        }
+
+        $data[$dateTime->format()] = [
+            'dateWeek' => $dateTime->__toString(),
+            'date' => $dateTime->format(),
+            'tracking' => $newNameForTask,
+        ];
+
+        $this->saveFileData($data);
+    }
 }

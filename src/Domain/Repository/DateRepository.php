@@ -8,4 +8,5 @@ interface DateRepository
 {
     public function save(DateTime $dateTime, string $dateTracking): void;
     public function readAll(?DateTime $now = null): array;
+    public function update(DateTime $dateTime, string $newNameForTask): void;
 }

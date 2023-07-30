@@ -24,8 +24,9 @@ class CommandFinder
         $this->commands[] = $command;
     }
 
-    public function findCommand(string $commandName): ?Command
+    public function findCommand(array $inputs): ?Command
     {
+        $commandName = array_shift($inputs);
         foreach ($this->commands as $command) {
             if ($command->getName() === $commandName) {
                 return $command;
