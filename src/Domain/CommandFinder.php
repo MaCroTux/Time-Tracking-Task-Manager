@@ -34,4 +34,15 @@ class CommandFinder
 
         return null;
     }
+
+    public function getDefaultCommand(): ?Command
+    {
+        foreach ($this->commands as $command) {
+            if ($command->isDefault()) {
+                return $command;
+            }
+        }
+
+        return null;
+    }
 }

@@ -109,4 +109,9 @@ class ListCommandService implements Command
 
         return $list;
     }
+
+    public function isDefault(): bool
+    {
+        return true;
+    }
 }

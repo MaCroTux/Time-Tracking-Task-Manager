@@ -28,7 +28,9 @@ class ShowTaskUseCase
         string $input
     ): void {
         if (empty($input)) {
-            $this->output->writeNl("-help para más información");
+            $this->commandFinder->getDefaultCommand()?->__invoke();
+            $this->output->addEOL();
+            $this->output->writeNl("Escribe --help para más información");
             return;
         }
 
@@ -51,7 +53,7 @@ class ShowTaskUseCase
 
     private function isHelperCommand(string $input): bool
     {
-        return str_starts_with($input, '-help');
+        return str_starts_with($input, '--help');
     }
 
     private function saveTask(
