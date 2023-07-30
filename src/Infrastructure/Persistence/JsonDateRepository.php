@@ -2,8 +2,6 @@
 
 namespace Tracking\Infrastructure\Persistence;
 
-use DateTimeImmutable;
-use DateTimeInterface;
 use Tracking\Domain\Entity\DateTime;
 use Tracking\Domain\Repository\DateRepository;
 

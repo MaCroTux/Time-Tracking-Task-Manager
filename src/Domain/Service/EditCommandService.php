@@ -4,7 +4,6 @@ namespace Tracking\Domain\Service;
 
 use Tracking\Domain\Command;
 use Tracking\Domain\Entity\DateTime;
-use Tracking\Domain\Entity\Task;
 use Tracking\Domain\Repository\DateRepository;
 use Tracking\Domain\Repository\OutPutOInterface;
 
@@ -13,18 +12,15 @@ class EditCommandService implements Command
     private const TASK_MESSAGE = 'tracking';
     private const COMMAND = "-e";
 
-    private AcumulateTimeFromPrevTaskService $acumulateTimeFromPrevTaskService;
     private DateRepository $dateRepository;
     private DateTime $dateTime;
     private OutPutOInterface $outPut;
 
     public function __construct(
-        AcumulateTimeFromPrevTaskService $acumulateTimeFromPrevTaskService,
         DateRepository                   $dateRepository,
         DateTime                         $dateTime,
         OutPutOInterface                 $outPut,
     ) {
-        $this->acumulateTimeFromPrevTaskService = $acumulateTimeFromPrevTaskService;
         $this->dateRepository = $dateRepository;
         $this->dateTime = $dateTime;
         $this->outPut = $outPut;
@@ -86,16 +82,6 @@ class EditCommandService implements Command
         $command = self::COMMAND;
 
         return "$command Lista todas las tareas registradas.";
-    }
-
-    private function lastTimeTracking(): string
-    {
-        $all = $this->dateRepository->readAll($this->dateTime);
-        $dates = array_keys($all);
-        return $this->acumulateTimeFromPrevTaskService->__invoke(
-            end($dates),
-            date(DATE_ATOM)
-        );
     }
 
     /**

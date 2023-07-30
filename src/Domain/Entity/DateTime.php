@@ -6,6 +6,7 @@ use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
+use Exception;
 
 class DateTime
 {
@@ -35,6 +36,7 @@ class DateTime
         return $this->dateTimeImmutable->diff($dateTime->dateTimeImmutable);
     }
 
+    /** @throws Exception */
     public static function now(): self
     {
         return new self(

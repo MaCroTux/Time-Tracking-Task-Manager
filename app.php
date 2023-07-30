@@ -27,7 +27,6 @@ $listCommand = new ListCommandService(
 $commandFinder->addCommand($listCommand);
 
 $editCommand = new EditCommandService(
-    new AcumulateTimeFromPrevTaskService(),
     $dateRepository,
     $time,
     $outPut
