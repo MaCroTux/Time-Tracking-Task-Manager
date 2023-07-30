@@ -6,7 +6,7 @@ use Tracking\Domain\Entity\DateTime;
 
 class AcumulateTimeFromPrevTaskService
 {
-    public function __invoke(string $prevDate, string $date): string
+    public function __invoke(string $prevDate, DateTime $dateNow): string
     {
         $timeAccumulated = "";
 
@@ -15,7 +15,6 @@ class AcumulateTimeFromPrevTaskService
         }
 
         $datePrev = DateTime::fromString($prevDate);
-        $dateNow = DateTime::fromString($date);
         $dateAccumulated = $datePrev->diff($dateNow);
 
         if ($dateAccumulated->h > 0) {

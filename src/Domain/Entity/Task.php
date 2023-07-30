@@ -6,24 +6,37 @@ use Tracking\Domain\Service\AcumulateTimeFromPrevTaskService;
 
 class Task
 {
+    private DateTime $date;
     private string $task;
     private ?string $timeAccumulated;
 
-    public function __construct(string $task, ?string $timeAccumulated = null)
+    public function __construct(DateTime $date, string $task, ?string $timeAccumulated = null)
     {
+        $this->date = $date;
         $this->task = $task;
         $this->timeAccumulated = $timeAccumulated;
     }
 
-    public static function build($prevDate, $date, $task): self
+    public static function fromPreviouslyDateAndTaskData(?string $prevDate, array $task): self
     {
+        $date = DateTime::fromString($task['date']);
+        $dateWeek = $task['dateWeek'];
+        $tracking = $task['tracking'];
+
         if ($prevDate !== null) {
             $acumulateTimeFromPrevTaskService = new AcumulateTimeFromPrevTaskService();
             $timeAccumulated = $acumulateTimeFromPrevTaskService->__invoke($prevDate, $date);
-            return new self("[{$task['dateWeek']}] {$task['tracking']}", $timeAccumulated);
+            return new self(
+                $date,
+                "[$dateWeek] $tracking",
+                $timeAccumulated
+            );
         }
 
-        return new self("[{$task['dateWeek']}] {$task['tracking']}");
+        return new self(
+            $date,
+            "[$dateWeek] $tracking"
+        );
     }
 
     /** @return array<string, string> */
@@ -31,12 +44,23 @@ class Task
     {
         return [
             $this->task,
-            $this->timeAccumulated
+            $this->timeAccumulated,
+            $this->date->format(),
         ];
     }
 
     public function __toString(): string
     {
         return "$this->task ($this->timeAccumulated)";
+    }
+
+    public function getDateString(): string
+    {
+        return $this->date->format();
+    }
+
+    public function getDescription(): string
+    {
+        return $this->task;
     }
 }

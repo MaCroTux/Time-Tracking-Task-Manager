@@ -2,6 +2,7 @@
 
 namespace Tracking\Domain\Service;
 
+use Exception;
 use Tracking\Domain\Command;
 use Tracking\Domain\Entity\DateTime;
 use Tracking\Domain\Entity\Task;
@@ -38,6 +39,7 @@ class ListCommandService implements Command
         return self::COMMAND;
     }
 
+    /** @throws Exception */
     public function __invoke(array $inputs): void
     {
         $this->outPut->addEOL();
@@ -82,13 +84,18 @@ class ListCommandService implements Command
         return "$command Lista todas las tareas registradas.";
     }
 
+    /** @throws Exception */
     private function lastTimeTracking(): string
     {
-        $all = $this->dateRepository->readAll($this->dateTime);
-        $dates = array_keys($all);
+        $allTask = $this->dateRepository->readAll($this->dateTime);
+        $dates = array_map(
+            fn (Task $task) => $task->getDateString(),
+            $allTask
+        );
+
         return $this->acumulateTimeFromPrevTaskService->__invoke(
             end($dates),
-            date(DATE_ATOM)
+            DateTime::now()
         );
     }
 
@@ -98,16 +105,7 @@ class ListCommandService implements Command
      */
     private function getList(DateTime $dateTime): array
     {
-        $dates = $this->dateRepository->readAll($dateTime);
-
-        $list = [];
-        $prevDate = null;
-        foreach ($dates as $date => $task) {
-            $list[] = Task::build($prevDate, $date, $task);
-            $prevDate = $date;
-        }
-
-        return $list;
+        return $this->dateRepository->readAll($dateTime);
     }
 
     public function isDefault(): bool

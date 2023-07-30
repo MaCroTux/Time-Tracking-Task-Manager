@@ -3,6 +3,7 @@
 namespace Tracking\Infrastructure\Persistence;
 
 use Tracking\Domain\Entity\DateTime;
+use Tracking\Domain\Entity\Task;
 use Tracking\Domain\Repository\DateRepository;
 
 class JsonDateRepository implements DateRepository
@@ -24,6 +25,8 @@ class JsonDateRepository implements DateRepository
 
         return "./$fileName$timeName.json";
     }
+
+    /** @return Task[] */
     public function readAll(?DateTime $now = null): array
     {
         if (!file_exists($this->getTimeFileName())) {
@@ -57,16 +60,26 @@ class JsonDateRepository implements DateRepository
         file_put_contents($this->getTimeFileName(), json_encode($data));
     }
 
+    /** @return Task[] */
     private function jsonDecodeFile(string $fileName): array
     {
         if (!file_exists($fileName)) {
             return [];
         }
 
-        return json_decode(
+        $rawData = json_decode(
             file_get_contents($fileName),
             true
         );
+
+        $list = [];
+        $prevDate = null;
+        foreach ($rawData as $data) {
+            $list[] = Task::fromPreviouslyDateAndTaskData($prevDate, $data);
+            $prevDate = $data['date'];
+        }
+
+        return $list;
     }
 
     public function update(DateTime $dateTime, string $newNameForTask): void

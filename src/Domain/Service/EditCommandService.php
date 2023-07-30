@@ -4,12 +4,12 @@ namespace Tracking\Domain\Service;
 
 use Tracking\Domain\Command;
 use Tracking\Domain\Entity\DateTime;
+use Tracking\Domain\Entity\Task;
 use Tracking\Domain\Repository\DateRepository;
 use Tracking\Domain\Repository\OutPutOInterface;
 
 class EditCommandService implements Command
 {
-    private const TASK_MESSAGE = 'tracking';
     private const COMMAND = "-e";
 
     private DateRepository $dateRepository;
@@ -43,14 +43,14 @@ class EditCommandService implements Command
         unset($command);
         $this->outPut->addEOL();
 
-        $taskForEditRaw = $this->getTask($this->dateTime, (int)$index);
+        $taskForEdit = $this->getTask($this->dateTime, (int)$index);
 
-        if ($taskForEditRaw === null) {
+        if ($taskForEdit === null) {
             $this->outPut->writeNl("No existe la tarea con el índice $index.");
             return;
         }
 
-        $taskMessage = $taskForEditRaw[self::TASK_MESSAGE] ?? '';
+        $taskMessage = $taskForEdit->getDescription();
         if (empty($taskMessage)) {
             $this->outPut->writeNl("Sin tareas registradas.");
             return;
@@ -70,7 +70,7 @@ class EditCommandService implements Command
         }
 
         $this->dateRepository->update(
-            DateTime::fromString($taskForEditRaw['date']),
+            DateTime::fromString($taskForEdit->getDateString()),
             $newNameForTask
         );
 
@@ -89,7 +89,7 @@ class EditCommandService implements Command
      * @param int $index
      * @return null|array
      */
-    private function getTask(DateTime $dateTime, int $index): ?array
+    private function getTask(DateTime $dateTime, int $index): ?Task
     {
         $tasks = $this->dateRepository->readAll($dateTime);
 
